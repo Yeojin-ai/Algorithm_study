@@ -1,0 +1,55 @@
+
+/*노드의 생성과 소멸*/
+typedef char ElementType;
+
+typedef struct tagLCRSNode
+{
+	struct tagLCRSNode* LeftChild;
+	struct tagLCRSNode* RightSibling;
+
+	ElementType Data;
+} LCRSNode;
+
+LCRSNode* LCRS_CreateNode(ElementType NewData)
+{
+	LCRSNode* NewNode = (LCRSNode*)malloc(sizeof(LCRSNode));	//구조체 크기만큼 자유저장소에 할당
+	NewNode->LeftChild = NULL;									//매개변수 NewNode를 Data에 저장한 후, 그 주소를 반환
+	NewNode->RightSibling = NULL;
+	NewNode->Data = NewData;
+}
+
+void LCRS_DestroyNode(LCRSNode* Node) {		//자유저장소에서 해체
+	free(Node);
+}
+
+//자식노드 연결하기
+void LCRS_AddChildNode(LCRSNode* Parent, LCRSNode* Child)
+{
+	if (Parent->LeftChild == NULL) {		//부모노드(Parent)에 자식노드가 있는 지 검사
+		Parent->LeftChild = Child;			//Null인 경우 LeftChild포인터에 Child가 가리키고 있는 주소값 저장.
+	}
+	else {									//자식노드가 하나 이상 있음
+		LCRSNode* TempNode = Parent->LeftChild;
+		while (TempNode->RightSibling != NULL) TempNode = TempNode->RightSibling;	//RightSibling 포인터를 이용해 가장 오른쪽에 있는 자식 노드를 찾아냄.
+
+		TempNode->RightSibling = Child;		//최우측 자식 노드의 RightSibling에 Child를 대입: 새로운 자식을 하나 더 얻음
+	}
+}
+
+//트리 출력하기
+void LCRS_PrintTree(LCRSNode* Node, int Depth)
+{
+	int i = 0;
+
+	/*깊이만큼 들여쓰기 한다.*/
+	for (i = 0; i < Depth; i++) printf(" ");
+
+	/*노드에 담긴 데이터를 출력한다.*/
+	printf("%c\n", Node->Data);
+
+	if (Node->LeftChild != NULL)
+		LCRS_PrintTree(Node->LeftChild, Depth + 1);
+
+	if (Node->RightSibling != NULL)
+		LCRS_PrintTree(Node->RightSibling, Depth);
+}
